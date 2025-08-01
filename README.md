@@ -1,93 +1,201 @@
 # healthcare-booking-system
 
-## ✅ Basic Functional Requirements
+## ✅ **Functional Requirements (Updated)**
 
 ### 👥 User & Roles
 
-* Patients can register, log in, and manage their profile.
-* Doctors can register or be added by Admin, manage availability, and view appointments.
-* Admin can manage users, doctors, and view system analytics.
+* **Patients**
+
+  * Can self-register
+  * View/search doctors from any hospital
+  * Book, reschedule, or cancel appointments
+
+* **Doctors**
+
+  * Cannot self-register as verified doctors
+  * Must be added/invited by a **Hospital Admin**
+  * Can manage their availability and view their appointments
+  * Must be verified before allowed to serve
+
+* **Hospital Admins**
+
+  * Belong to a specific hospital
+  * Can:
+
+    * Add/verify doctors within their hospital
+    * View/manage appointments of doctors in their hospital
+    * Manage hospital details
+
+* **(Optional) Super Admin**
+
+  * Can:
+
+    * Manage hospitals and their admins
+    * View global analytics
+    * Approve hospital registrations
+
+---
+
+### 🏥 Hospital Management (Multi-Tenancy)
+
+* Each hospital:
+
+  * Has its own identity, name, contact details
+  * Can register/login via hospital admin
+  * Has its own list of doctors and statistics
+* Each doctor belongs to one hospital (`HospitalId`)
+* Data visibility is scoped:
+
+  * Hospital Admins see only their hospital's data
+  * Patients see doctors across all hospitals
+
+---
 
 ### 🔐 Authentication & Authorization
 
-* User registration and login (via email & password)
-* Role-based access control (Patient, Doctor, Admin)
-* JWT token issuance and validation
+* Secure registration/login using email + password
+* Role-based access (`Patient`, `Doctor`, `HospitalAdmin`, `SuperAdmin`)
+* JWT token issuance and role-based access control
+* Optional: email verification or 2FA support
+
+---
 
 ### 🩺 Doctor Management
 
-* View doctor profiles (name, specialization, availability)
-* Search/filter doctors (by specialization, city, etc.)
-* Manage doctor availability (add/edit/delete time slots)
+* Hospital admins can:
+
+  * Add or invite doctors
+  * Review and verify submitted doctor credentials (e.g., license, ID)
+  * Suspend or remove doctors
+* Doctors can:
+
+  * Edit their profile and availability
+  * View their upcoming/past appointments
+* Search doctors by:
+
+  * Hospital
+  * Specialization
+  * City
+  * Availability
+
+---
 
 ### 📆 Appointment Management
 
-* Book appointments with available doctors
-* View upcoming and past appointments
-* Cancel/reschedule appointments
-* Doctor can accept/reject appointments (optional)
+* Patients can:
+
+  * Browse available time slots
+  * Book, reschedule, or cancel appointments
+* Doctors can:
+
+  * Accept or reject appointments (optional)
+* Admins can:
+
+  * View/manage appointments of their hospital
+* Statuses: `Pending`, `Confirmed`, `Cancelled`, `Rejected`
+
+---
 
 ### 🔔 Notifications
 
-* Send email/SMS/in-app notifications on:
+* Notification triggers:
 
-  * Appointment booking
-  * Appointment rescheduling/cancellation
-  * Reminders before appointment
-* Track sent notifications
+  * Appointment booked, rescheduled, or cancelled
+  * Reminders before appointment (e.g., 24hr, 1hr)
+* Channels:
 
-### 📊 Admin Dashboard (later, optional)
-
-* View user statistics
-* Doctor onboarding/approval
-* System logs or audit trail
+  * Email
+  * SMS (optional)
+  * In-app (for doctors/admins)
+* Track delivery status for all notifications
 
 ---
 
-## ✅ Basic Non-Functional Requirements
+### 📊 Admin Dashboard (Optional, Phase 2)
+
+* View metrics:
+
+  * Total patients
+  * Number of appointments (daily/weekly/monthly)
+  * Doctor performance (appointment load)
+* Approve/reject hospital or doctor registrations
+* View audit logs and login activity
+
+---
+
+## ✅ **Non-Functional Requirements (Updated)**
 
 ### ⚙️ Architecture
 
-* Microservice-based (each service has its own DB)
-* Containerized using Docker
-* Internal communication via REST (initially), RabbitMQ (later)
-* API Gateway for routing
-
-### 🛡️ Security
-
-* Secure password storage (hashing via BCrypt)
-* Token expiration and refresh handling (optional)
-* HTTPS enforced
-
-### 📈 Scalability & Performance
-
-* Services should scale independently
-* Async operations (notifications, logs)
-* Caching for frequent queries (doctor list)
-
-### 🔍 Logging & Monitoring
-
-* Centralized logging (e.g., Serilog + Seq/ELK)
-* Health checks for each service
-* Metrics with Prometheus/Grafana
-
-### 📦 DevOps
-
-* Docker Compose for local dev
-* Kubernetes manifests for deployment (optional)
-* CI/CD pipeline for builds & deployment
+* Microservice-based design with clear domain boundaries
+* Each service has its own database (Database-per-service)
+* Internal sync communication: REST (initial)
+* Internal async communication: RabbitMQ (for notifications)
+* API Gateway for routing, rate limiting, and access control
 
 ---
 
-## 🧩 Microservices Breakdown (Initial Scope)
+### 🛡️ Security
 
-| Microservice            | Key Features                                  |
-| ----------------------- | --------------------------------------------- |
-| **AuthService**         | Register/Login, JWT issuance, role management |
-| **UserService**         | Patient/Doctor profiles, user info            |
-| **DoctorService**       | Doctor profiles, availability, search         |
-| **AppointmentService**  | Book/reschedule/cancel appointments           |
-| **NotificationService** | Send email/SMS reminders (via RabbitMQ)       |
-| **ApiGateway**          | Single entry point, routes to services        |
+* Enforce HTTPS
+* Secure password hashing (BCrypt or PBKDF2)
+* JWT-based access tokens with role and tenant (HospitalId) claims
+* Optional:
+
+  * Token refresh mechanism
+  * IP allowlisting for Hospital Admins
+  * Secure document storage (S3, Azure Blob) for doctor verification docs
+
+---
+
+### 📈 Scalability & Performance
+
+* Independent scalability of services
+* Support horizontal scaling of notification service
+* Use caching for high-read endpoints (doctor list, slots)
+* Pagination and filtering for large result sets (appointments, users)
+
+---
+
+### 🔍 Logging & Monitoring
+
+* Centralized structured logging (e.g., Serilog + Seq / ELK)
+* Log:
+
+  * User activity (logins, changes)
+  * Appointment actions
+  * Errors and exceptions
+* Health checks (liveness/readiness probes)
+* Metrics collection with Prometheus + Grafana
+
+---
+
+### 📦 DevOps & Deployment
+
+* **Local Dev:** Docker Compose with all services + PostgreSQL + RabbitMQ
+* **Deployment:** Kubernetes (Helm or Kustomize manifests)
+* **CI/CD:**
+
+  * GitHub Actions or Azure DevOps for:
+
+    * Build and push Docker images
+    * Deploy to cluster with zero downtime
+* **Environment Config:**
+
+  * Use environment variables or centralized config service (Consul/etcd)
+
+---
+
+## 🧩 Microservices Breakdown (Updated)
+
+| Microservice            | Key Features                                                    |
+| ----------------------- | --------------------------------------------------------------- |
+| **AuthService**         | User login/registration, JWT handling, role enforcement         |
+| **UserService**         | Profile management, hospital/role lookup                        |
+| **HospitalService**     | Manage hospital info, register hospital, assign hospital admins |
+| **DoctorService**       | Manage doctor data, verification, availability                  |
+| **AppointmentService**  | Booking/rescheduling/canceling appointments                     |
+| **NotificationService** | Email/SMS reminders via RabbitMQ                                |
+| **ApiGateway**          | Single entry point, role-based routing, token verification      |
 
 ---
