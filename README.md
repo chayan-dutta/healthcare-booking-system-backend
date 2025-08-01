@@ -121,6 +121,27 @@
 * Approve/reject hospital or doctor registrations
 * View audit logs and login activity
 
+## 💰 Monetization & Payment Flow (Updated Functional Requirements)
+### 🏥 Hospital Subscription (Platform Revenue)
+Hospitals must pay X (one-time or recurring) to:
+- Register on the platform
+- Get verified and onboarded
+- Gain access to doctor and appointment management
+- Payment triggers verification workflow (manual or automated)
+- Super Admin approves after payment and document review
+
+## 👨‍⚕️ Doctor Consultation Charges (Hospital Revenue)
+Each hospital can define its own pricing model:
+- Set a consultation/appointment fee (₹Y)
+- Optionally, define separate rates for different doctors
+- Patient is shown the final payable amount at booking time
+- Payment gateway integration required (e.g., Razorpay, Stripe)
+
+## 🎁 First-Time User Discount (Platform Promo)
+New patients receive a Z% discount (e.g., 50%) on their first appointment
+- System tracks if IsFirstAppointment == true for the user
+- Discount is applied at checkout
+- Platform can optionally subsidize the discount (split fee with hospital)
 ---
 
 ## ✅ **Non-Functional Requirements (Updated)**
