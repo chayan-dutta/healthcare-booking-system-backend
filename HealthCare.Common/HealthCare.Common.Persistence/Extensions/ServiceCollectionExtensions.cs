@@ -32,12 +32,15 @@ public static class ServiceCollectionExtensions
         // Validate options
         if (dbOptions == null ||
             string.IsNullOrEmpty(dbOptions.Host) ||
+            string.IsNullOrEmpty(dbOptions.Port) ||
             string.IsNullOrEmpty(dbOptions.Database) ||
             string.IsNullOrEmpty(dbOptions.Username) ||
             string.IsNullOrEmpty(dbOptions.Password))
         {
             throw new ArgumentException($"Invalid or missing database configuration under section '{configSectionName}'");
         }
+
+        int port = int.Parse(dbOptions.Port);
 
         // Build connection string
         var connectionString = $"Host={dbOptions.Host};Port={dbOptions.Port};Database={dbOptions.Database};Username={dbOptions.Username};Password={dbOptions.Password}";

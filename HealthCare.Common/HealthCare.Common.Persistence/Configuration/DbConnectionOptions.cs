@@ -10,7 +10,7 @@
         /// <summary>
         /// 
         /// </summary>
-        public int Port { get; set; } = 5432;
+        public string Port { get; set; } = "5432";
         
         /// <summary>
         /// 
