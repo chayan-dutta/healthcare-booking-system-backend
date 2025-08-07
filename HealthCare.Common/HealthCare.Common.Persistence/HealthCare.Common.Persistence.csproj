@@ -7,7 +7,7 @@
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Authors>HealthStack</Authors>
     <Company>HealthStack</Company>
-    <BaseOutputPath>C:\Users\Chayan.Dutta\Desktop\Practice\Full Stack\Health Care Booking System\healthcare-booking-system-backend\HealthCare.Common\Output</BaseOutputPath>
+    <BaseOutputPath>C:\practice-project\HealthCareBookingSystem\HealthCare.Common\PackageOutput</BaseOutputPath>
   </PropertyGroup>
 
   <ItemGroup>
