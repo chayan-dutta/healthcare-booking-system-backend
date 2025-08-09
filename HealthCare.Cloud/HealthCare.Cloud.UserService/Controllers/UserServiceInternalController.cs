@@ -1,5 +1,6 @@
 ﻿using HealthCare.Cloud.UserService.Models;
 using HealthCare.Cloud.UserService.Repository;
+using HealthCare.Common.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HealthCare.Cloud.UserService.Controllers
@@ -34,6 +35,7 @@ namespace HealthCare.Cloud.UserService.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("createuser")]
+        [InternalAuth]
         public async Task<Guid> AddUser([FromBody] CreateUser user)
         {
             return await _userDataRepo.AddUserToDatabase(user);

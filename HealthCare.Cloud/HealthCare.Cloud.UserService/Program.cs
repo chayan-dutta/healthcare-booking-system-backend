@@ -1,4 +1,5 @@
 using HealthCare.Cloud.UserService.Data;
+using HealthCare.Cloud.UserService.Repository;
 using HealthCare.Common.Persistence.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,7 +11,11 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// Db Context
 builder.Services.AddPostgresDbContext<UserDbContext>(builder.Configuration, "HealthCareBookingSystemDB");
+
+// Repositories
+builder.Services.AddScoped<IUserDataRepository, UserDataRepository>();
 
 var app = builder.Build();
 

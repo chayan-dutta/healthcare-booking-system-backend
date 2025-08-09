@@ -53,7 +53,7 @@ public partial class UserDataRepository(UserDbContext userDbContext, ILogger<Use
     #region Logger Messages
 
     [LoggerMessage(LogLevel.Error, Message = "Error caught at UserDataRepository - {exception}")]
-    static partial void UserRepositoryLogException(Exception exception);
+    partial void UserRepositoryLogException(Exception exception);
 
     #endregion
 }
