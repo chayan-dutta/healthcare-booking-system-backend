@@ -1,4 +1,4 @@
-using HealthCare.Cloud.AuthSevice.Data;
+using HealthCare.Cloud.AuthService.Data;
 using HealthCare.Common.Persistence.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);

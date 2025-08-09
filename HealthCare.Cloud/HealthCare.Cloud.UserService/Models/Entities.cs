@@ -42,7 +42,7 @@ public class User
     /// 
     /// </summary>
     [Column("HospitalId", TypeName = "uuid")]
-    public Guid? HospitalId { get; set; }
+    public Guid? HospitalId { get; set; } = Guid.Empty;
 
     /// <summary>
     /// 

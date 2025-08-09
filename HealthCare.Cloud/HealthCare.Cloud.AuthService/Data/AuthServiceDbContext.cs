@@ -1,7 +1,7 @@
-﻿using HealthCare.Cloud.AuthSevice.Entities;
+﻿using HealthCare.Cloud.AuthService.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace HealthCare.Cloud.AuthSevice.Data
+namespace HealthCare.Cloud.AuthService.Data
 {
     /// <summary>
     /// 
