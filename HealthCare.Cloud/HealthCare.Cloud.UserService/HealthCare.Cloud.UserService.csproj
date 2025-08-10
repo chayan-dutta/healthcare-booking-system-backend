@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="HealthCare.Common.Authorization" Version="1.0.0" />
+    <PackageReference Include="HealthCare.Common.Models" Version="1.0.0" />
     <PackageReference Include="HealthCare.Common.Persistence" Version="1.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.7">
       <PrivateAssets>all</PrivateAssets>

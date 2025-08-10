@@ -1,6 +1,7 @@
 ﻿using HealthCare.Cloud.UserService.Models;
 using HealthCare.Cloud.UserService.Repository;
 using HealthCare.Common.Authorization;
+using HealthCare.Common.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HealthCare.Cloud.UserService.Controllers
@@ -9,7 +10,7 @@ namespace HealthCare.Cloud.UserService.Controllers
     /// The APIs will be used by the services
     /// </summary>
     [ApiController]
-    [Route("users/internal")]
+    [Route("api/users/internal")]
     [Tags("Internal APIs of User Service")]
     public partial class UserServiceInternalController : ControllerBase
     {
@@ -35,10 +36,24 @@ namespace HealthCare.Cloud.UserService.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("createuser")]
-        [InternalAuth]
-        public async Task<Guid> AddUser([FromBody] CreateUser user)
-        {
-            return await _userDataRepo.AddUserToDatabase(user);
+       // [InternalAuth]
+        public async Task<ApiResponse<object>> AddUser([FromBody] CreateUser user)
+        {           
+            Guid userId =  await _userDataRepo.AddUserToDatabase(user);
+
+            var addUserResponse = new
+            {
+                userId,
+                user.Email
+            };
+
+            return new ApiResponse<object>
+            {
+                Data = addUserResponse,
+                IsSuccess = true,
+                Message = "User added successfully",
+                Status = System.Net.HttpStatusCode.Created
+            };
         }
     }
 }

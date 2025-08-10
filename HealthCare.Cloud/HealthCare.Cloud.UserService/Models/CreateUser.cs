@@ -1,31 +1,57 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace HealthCare.Cloud.UserService.Models
+namespace HealthCare.Cloud.UserService.Models;
+
+/// <summary>
+/// Create user model
+/// </summary>
+public class CreateUser
 {
-    public class CreateUser
-    {
-        [JsonPropertyName("email")]
-        public required string Email { get; set; }
+    /// <summary>
+    /// email id
+    /// </summary>
+    [JsonPropertyName("email")]
+    public required string Email { get; set; }
 
-        [JsonPropertyName("full_name")]
-        public required string FullName { get; set; }
+    /// <summary>
+    /// Full name
+    /// </summary>
+    [JsonPropertyName("fullname")]
+    public required string FullName { get; set; }
 
-        [JsonPropertyName("role")]
-        public UserRole Role { get; set; }
+    /// <summary>
+    /// Role
+    /// </summary>
+    [JsonPropertyName("role")]
+    public UserRole Role { get; set; } = UserRole.Patient;
 
-        [JsonPropertyName("hospital_id")]
-        public Guid HospitalId { get; set; } = Guid.Empty;
+    /// <summary>
+    /// Hospital Id
+    /// </summary>
+    [JsonPropertyName("hospitalId")]
+    public Guid HospitalId { get; set; } = Guid.Empty;
 
-        [JsonPropertyName("phone_number")]
-        public string? PhoneNumber { get; set; }
+    /// <summary>
+    /// Phone Number
+    /// </summary>
+    [JsonPropertyName("phoneNumber")]
+    public string? PhoneNumber { get; set; }
 
-        [JsonPropertyName("gender")]
-        public Gender Gender { get; set; }
+    /// <summary>
+    /// Gender
+    /// </summary>
+    [JsonPropertyName("gender")]
+    public Gender Gender { get; set; } = Gender.Other;
 
-        [JsonPropertyName("dob")]
-        public DateTime DOB { get; set; }
+    /// <summary>
+    /// Date of birth
+    /// </summary>
+    [JsonPropertyName("dob")]
+    public DateTime DOB { get; set; }
 
-        [JsonPropertyName("address")]
-        public Address? Address { get; set; }
-    }
+    /// <summary>
+    /// address
+    /// </summary>
+    [JsonPropertyName("address")]
+    public Address? Address { get; set; }
 }

@@ -6,7 +6,7 @@ public class ClientPrimitives
     public string Url { get; set; } = string.Empty;
 
     /// <summary>Optional headers</summary>
-    public Dictionary<string, string> Headers { get; set; } = [];
+    public Dictionary<string, string>? Headers { get; set; }
 
     /// <summary>Bearer token for Authorization</summary>
     public string? BearerToken { get; set; }

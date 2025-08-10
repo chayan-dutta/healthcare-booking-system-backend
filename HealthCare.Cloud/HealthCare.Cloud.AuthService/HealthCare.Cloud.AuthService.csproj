@@ -7,6 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="HealthCare.Common.HttpClientHelper" Version="1.0.0" />
+    <PackageReference Include="HealthCare.Common.Models" Version="1.0.0" />
     <PackageReference Include="HealthCare.Common.Persistence" Version="1.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.8">
       <PrivateAssets>all</PrivateAssets>
