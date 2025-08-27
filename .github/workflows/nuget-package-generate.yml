@@ -58,7 +58,7 @@ jobs:
       - name: Build
         run: dotnet build HealthCare.Common/HealthCare.Common.sln -c Release --no-restore
 
-      # 6. Pack each project (using find_projects output)
+      # 6. Pack each project (use find_projects output)
       - name: Pack projects
         shell: pwsh
         run: |
