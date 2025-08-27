@@ -10,7 +10,7 @@ namespace HealthCare.Common.Models;
 public class ApiResponse<T> where T : notnull
 {
     /// <summary>
-    /// Status code
+    /// Status code to determine the status returned by API
     /// </summary>
     [JsonPropertyName("statuscode")]
     public HttpStatusCode Status { get; set; }
