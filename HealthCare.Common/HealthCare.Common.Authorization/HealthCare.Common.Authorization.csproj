@@ -5,7 +5,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Authors>HealthStack</Authors>
+    <Authors>Healthora Solutions</Authors>
+	<Company>Healthora Solutions</Company>
     <PackageOutputPath>C:\practice-project\HealthCareBookingSystem\HealthCare.Common\PackageOutput\Debug\</PackageOutputPath>
   </PropertyGroup>
 
