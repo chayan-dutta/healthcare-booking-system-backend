@@ -32,4 +32,10 @@ public class ApiResponse<T> where T : notnull
     /// </summary>
     [JsonPropertyName("isSuccessStatus")]
     public bool IsSuccess { get; set; }
+
+    /// <summary>
+    /// Just to test
+    /// </summary>
+    [JsonPropertyName("otherMessage")]
+    public string OtherMessage { get; set; } =string.Empty;
 }
