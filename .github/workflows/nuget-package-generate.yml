@@ -11,6 +11,7 @@ on:
       - master
     paths:
       - "HealthCare.Common/**" # only run if something in HealthCare.Common changes
+  workflow_dispatch:
 
 jobs:
   build-and-publish:
