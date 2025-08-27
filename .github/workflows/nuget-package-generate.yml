@@ -33,8 +33,9 @@ jobs:
         id: find_projects
         shell: pwsh
         run: |
-          $projects = Get-ChildItem HealthCare.Common -Recurse -Filter *.csproj | ForEach-Object { $_.FullName } -join ';'
-          echo "projects=$projects" >> $env:GITHUB_OUTPUT
+          $projects = Get-ChildItem HealthCare.Common -Recurse -Filter *.csproj | ForEach-Object { $_.FullName }
+          $projectsString = $projects -join ';'
+          echo "projects=$projectsString" >> $env:GITHUB_OUTPUT
 
       # 4. Bump version for all
       - name: Bump version
