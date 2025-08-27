@@ -60,3 +60,6 @@ nunit-*.xml
 /HealthCare.Common/.vs
 /HealthCare.Cloud.UserService/.vs/HealthCareSystem
 /HealthCare.Cloud/.vs
+/HealthCare.Common/HealthCare.Common.Authorization/bin/Debug/net8.0/HealthCare.Common.Authorization.pdb
+/HealthCare.Common/HealthCare.Common.Authorization/bin/Debug/net8.0/HealthCare.Common.Authorization.dll
+/HealthCare.Common/HealthCare.Common.Authorization/bin/Debug/net8.0/HealthCare.Common.Authorization.deps.json
