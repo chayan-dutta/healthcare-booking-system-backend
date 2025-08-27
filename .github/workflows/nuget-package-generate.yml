@@ -33,9 +33,8 @@ jobs:
         id: find_projects
         shell: pwsh
         run: |
--         echo "projects=$(Get-ChildItem HealthCare.Common -Recurse -Filter *.csproj | ForEach-Object { $_.FullName } | Out-String)" >> $env:GITHUB_OUTPUT
-+         $projects = Get-ChildItem HealthCare.Common -Recurse -Filter *.csproj | ForEach-Object { $_.FullName } -join ';'
-+         echo "projects=$projects" >> $env:GITHUB_OUTPUT
+          $projects = Get-ChildItem HealthCare.Common -Recurse -Filter *.csproj | ForEach-Object { $_.FullName } -join ';'
+          echo "projects=$projects" >> $env:GITHUB_OUTPUT
 
       # 4. Bump version for all
       - name: Bump version
@@ -59,15 +58,16 @@ jobs:
       - name: Build
         run: dotnet build HealthCare.Common/HealthCare.Common.sln -c Release --no-restore
 
-      # 6. Pack each project
+      # 6. Pack each project (using find_projects output)
       - name: Pack projects
+        shell: pwsh
         run: |
           mkdir ./nupkgs
-          for proj in $(Get-ChildItem HealthCare.Common -Recurse -Filter *.csproj); do
-            echo "Packing $proj"
+          $projects = "${{ steps.find_projects.outputs.projects }}".Split(';')
+          foreach ($proj in $projects) {
+            Write-Output "Packing $proj"
             dotnet pack "$proj" -c Release -o ./nupkgs /p:PackageVersion=${{ steps.version.outputs.version }} --no-build
-          done
-        shell: pwsh
+          }
 
       # 7. Configure Azure Artifacts feed
       - name: Add Azure Artifacts source
