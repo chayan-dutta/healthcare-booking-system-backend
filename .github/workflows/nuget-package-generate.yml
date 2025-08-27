@@ -1,0 +1,76 @@
+name: Publish Common NuGet Packages
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - "HealthCare.Common/**" # only run if something in HealthCare.Common changes
+
+jobs:
+  build-and-publish:
+    runs-on: windows-latest
+
+    steps:
+      # 1. Checkout
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # 2. Setup .NET
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      # 3. Find all csproj inside HealthCare.Common
+      - name: Find projects
+        id: find_projects
+        run: |
+          echo "projects=$(Get-ChildItem HealthCare.Common -Recurse -Filter *.csproj | ForEach-Object { $_.FullName } | Out-String)" >> $env:GITHUB_OUTPUT
+        shell: pwsh
+
+      # 4. Bump version for all
+      - name: Bump version
+        id: version
+        run: |
+          VERSION_FILE=HealthCare.Common/Directory.Build.props
+          if [ ! -f "$VERSION_FILE" ]; then
+            echo '<?xml version="1.0" encoding="utf-8"?><Project><PropertyGroup><Version>1.0.0</Version></PropertyGroup></Project>' > $VERSION_FILE
+          fi
+          CURRENT_VERSION=$(grep -oP '(?<=<Version>).*?(?=</Version>)' $VERSION_FILE)
+          IFS='.' read -r MAJOR MINOR PATCH <<< "$CURRENT_VERSION"
+          NEW_VERSION="$MAJOR.$MINOR.$((PATCH+1))"
+          sed -i "s|<Version>.*</Version>|<Version>$NEW_VERSION</Version>|" $VERSION_FILE
+          echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
+        shell: bash
+
+      # 5. Restore & Build all projects
+      - name: Restore
+        run: dotnet restore HealthCare.Common/HealthCare.Common.sln
+
+      - name: Build
+        run: dotnet build HealthCare.Common/HealthCare.Common.sln -c Release --no-restore
+
+      # 6. Pack each project
+      - name: Pack projects
+        run: |
+          mkdir ./nupkgs
+          for proj in $(Get-ChildItem HealthCare.Common -Recurse -Filter *.csproj); do
+            echo "Packing $proj"
+            dotnet pack "$proj" -c Release -o ./nupkgs /p:PackageVersion=${{ steps.version.outputs.version }} --no-build
+          done
+        shell: pwsh
+
+      # 7. Configure Azure Artifacts feed
+      - name: Add Azure Artifacts source
+        run: |
+          dotnet nuget remove source HealthCareFeed || true
+          dotnet nuget add source "https://pkgs.dev.azure.com/${{ secrets.AZURE_ORG }}/${{ secrets.AZURE_PROJECT }}/_packaging/${{ secrets.AZURE_FEED_NAME }}/nuget/v3/index.json" \
+            --name "HealthCareFeed" \
+            --username "healthcarefeed" \
+            --password "${{ secrets.AZURE_FEED_PAT }}" \
+            --store-password-in-clear-text
+
+      # 8. Push packages
+      - name: Push NuGet packages
+        run: dotnet nuget push "./nupkgs/*.nupkg" --source "HealthCareFeed" --api-key az --skip-duplicate
