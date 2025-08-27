@@ -6,6 +6,11 @@ on:
       - master
     paths:
       - "HealthCare.Common/**" # only run if something in HealthCare.Common changes
+  pull_request:
+    branches:
+      - master
+    paths:
+      - "HealthCare.Common/**" # only run if something in HealthCare.Common changes
 
 jobs:
   build-and-publish:
