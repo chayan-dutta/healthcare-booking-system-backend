@@ -29,11 +29,13 @@ jobs:
           dotnet-version: "8.0.x"
 
       # 3. Find all csproj inside HealthCare.Common
-      - name: Find projects
+      - name: Find csproj files
         id: find_projects
-        run: |
-          echo "projects=$(Get-ChildItem HealthCare.Common -Recurse -Filter *.csproj | ForEach-Object { $_.FullName } | Out-String)" >> $env:GITHUB_OUTPUT
         shell: pwsh
+        run: |
+-         echo "projects=$(Get-ChildItem HealthCare.Common -Recurse -Filter *.csproj | ForEach-Object { $_.FullName } | Out-String)" >> $env:GITHUB_OUTPUT
++         $projects = Get-ChildItem HealthCare.Common -Recurse -Filter *.csproj | ForEach-Object { $_.FullName } -join ';'
++         echo "projects=$projects" >> $env:GITHUB_OUTPUT
 
       # 4. Bump version for all
       - name: Bump version
