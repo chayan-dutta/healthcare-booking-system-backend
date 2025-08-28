@@ -81,16 +81,21 @@ jobs:
             dotnet pack "$proj" -c Release -o ./nupkgs /p:PackageVersion=${{ steps.version.outputs.version }} --no-build
           }
 
-      # 7. Configure Azure Artifacts feed
+      # Install NuGet CLI
+      - name: Install NuGet
+        run: |
+          Invoke-WebRequest https://dist.nuget.org/win-x86-commandline/latest/nuget.exe -OutFile nuget.exe
+
+      # Configure Azure Artifacts feed
       - name: Add Azure Artifacts source
         run: |
-          dotnet nuget remove source HealthCareFeed || true
-          dotnet nuget add source "https://pkgs.dev.azure.com/${{ secrets.AZURE_ORG }}/${{ secrets.AZURE_PROJECT }}/_packaging/${{ secrets.AZURE_FEED_NAME }}/nuget/v3/index.json" `
-            --name "HealthCareFeed" `
-            --username "healthcarefeed" `
-            --password "${{ secrets.AZURE_FEED_PAT }}" `
-            --store-password-in-clear-text
+          ./nuget.exe sources Add -Name "HealthCareFeed" `
+            -Source "https://pkgs.dev.azure.com/${{ secrets.AZURE_ORG }}/${{ secrets.AZURE_PROJECT }}/_packaging/${{ secrets.AZURE_FEED_NAME }}/nuget/v3/index.json" `
+            -Username "healthcarefeed" `
+            -Password "${{ secrets.AZURE_FEED_PAT }}" `
+            -StorePasswordInClearText
 
-      # 8. Push packages
+      # Push packages using nuget.exe
       - name: Push NuGet packages
-        run: dotnet nuget push "./nupkgs/*.nupkg" --source "HealthCareFeed" --api-key az --skip-duplicate
+        run: |
+          ./nuget.exe push "./nupkgs/*.nupkg" -Source "HealthCareFeed" -ApiKey az -SkipDuplicate
