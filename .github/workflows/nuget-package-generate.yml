@@ -3,14 +3,10 @@ name: Publish Common NuGet Packages
 on:
   push:
     branches:
-      - master
+      - main # run only on push/merge into main
     paths:
-      - "HealthCare.Common/**"
-  pull_request:
-    branches:
-      - master
-    paths:
-      - "HealthCare.Common/**"
+      - "HealthCare.Common/**" # only if files inside Common changed
+
   workflow_dispatch:
 
 jobs:
