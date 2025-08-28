@@ -28,7 +28,12 @@ jobs:
         with:
           dotnet-version: "8.0.x"
 
-      # 3. Find all csproj inside HealthCare.Common
+      # 3. Download NuGet.exe
+      - name: Install NuGet CLI
+        run: |
+          curl -L https://dist.nuget.org/win-x86-commandline/latest/nuget.exe -o nuget.exe
+
+      # 4. Find all csproj inside HealthCare.Common
       - name: Find csproj files
         id: find_projects
         shell: pwsh
@@ -37,40 +42,30 @@ jobs:
           $projectsString = $projects -join ';'
           echo "projects=$projectsString" >> $env:GITHUB_OUTPUT
 
-      # 4. Bump version for all (PowerShell version)
+      # 5. Bump version
       - name: Bump version
         id: version
         shell: pwsh
         run: |
           $versionFile = "HealthCare.Common/Directory.Build.props"
-
           if (-not (Test-Path $versionFile)) {
             '<?xml version="1.0" encoding="utf-8"?><Project><PropertyGroup><Version>1.0.0</Version></PropertyGroup></Project>' | Out-File $versionFile -Encoding utf8
           }
-
-          [xml]$xml = Get-Content $versionFile
-          $currentVersion = $xml.Project.PropertyGroup.Version
-          if (-not $currentVersion) { $currentVersion = "1.0.0" }
-
+          $currentVersion = Select-String -Path $versionFile -Pattern '<Version>(.*)</Version>' | ForEach-Object { $_.Matches[0].Groups[1].Value }
           $parts = $currentVersion.Split('.')
-          $major = [int]$parts[0]
-          $minor = [int]$parts[1]
-          $patch = [int]$parts[2] + 1
+          $major = [int]$parts[0]; $minor = [int]$parts[1]; $patch = [int]$parts[2] + 1
           $newVersion = "$major.$minor.$patch"
-
-          $xml.Project.PropertyGroup.Version = $newVersion
-          $xml.Save($versionFile)
-
+          (Get-Content $versionFile) -replace "<Version>.*</Version>", "<Version>$newVersion</Version>" | Set-Content $versionFile
           echo "version=$newVersion" >> $env:GITHUB_OUTPUT
 
-      # 5. Restore & Build all projects
+      # 6. Restore & Build
       - name: Restore
         run: dotnet restore HealthCare.Common/HealthCare.Common.sln
 
       - name: Build
         run: dotnet build HealthCare.Common/HealthCare.Common.sln -c Release --no-restore
 
-      # 6. Pack each project
+      # 7. Pack projects
       - name: Pack projects
         shell: pwsh
         run: |
@@ -81,21 +76,18 @@ jobs:
             dotnet pack "$proj" -c Release -o ./nupkgs /p:PackageVersion=${{ steps.version.outputs.version }} --no-build
           }
 
-      # Install NuGet CLI
-      - name: Install NuGet
+      # 8. Configure Azure Artifacts feed (with encoded project name)
+      - name: Configure NuGet Source
+        shell: pwsh
         run: |
-          Invoke-WebRequest https://dist.nuget.org/win-x86-commandline/latest/nuget.exe -OutFile nuget.exe
-
-      # 7. Configure Azure Artifacts feed
-      - name: Add Azure Artifacts source
-        run: |
-          ./nuget.exe sources Remove -Name "HealthCareFeed" || true
+          $projectName = "${{ secrets.AZURE_PROJECT_NAME }}".Replace(" ", "%20")
+          ./nuget.exe sources Remove -Name "HealthCareFeed" | Out-Null
           ./nuget.exe sources Add -Name "HealthCareFeed" `
-            -Source "https://pkgs.dev.azure.com/${{ secrets.AZURE_ORG }}/${{ secrets.AZURE_PROJECT }}/_packaging/${{ secrets.AZURE_FEED_NAME }}/nuget/v3/index.json" `
+            -Source "https://pkgs.dev.azure.com/${{ secrets.AZURE_ORG }}/$projectName/_packaging/${{ secrets.AZURE_FEED_NAME }}/nuget/v3/index.json" `
             -Username "healthcarefeed" `
             -Password "${{ secrets.AZURE_FEED_PAT }}" `
             -StorePasswordInClearText
-      # Push packages using nuget.exe
+
+      # 9. Push packages
       - name: Push NuGet packages
-        run: |
-          ./nuget.exe push "./nupkgs/*.nupkg" -Source "HealthCareFeed" -ApiKey az -SkipDuplicate
+        run: ./nuget.exe push "./nupkgs/*.nupkg" -Source "HealthCareFeed" -ApiKey az -SkipDuplicate
