@@ -87,5 +87,6 @@ jobs:
             -StorePasswordInClearText
 
       # 9. Push packages
-      - name: Push NuGet packages
-        run: ./nuget.exe push "./nupkgs/*.nupkg" -Source "HealthCareFeed" -ApiKey az -SkipDuplicate
+      - name: Push packages
+        run: ./nuget.exe push "nupkgs\*.nupkg" -Source "HealthCareFeed" -ApiKey az -SkipDuplicate
+        shell: pwsh
