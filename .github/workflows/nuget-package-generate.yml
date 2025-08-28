@@ -77,13 +77,11 @@ jobs:
           }
 
       # 8. Configure Azure Artifacts feed (with encoded project name)
-      - name: Configure NuGet Source
-        shell: pwsh
+      - name: Add Azure Artifacts source
         run: |
-          $projectName = "${{ secrets.AZURE_PROJECT_NAME }}".Replace(" ", "%20")
-          ./nuget.exe sources Remove -Name "HealthCareFeed" | Out-Null
+          ./nuget.exe sources Remove -Name "HealthCareFeed" || true
           ./nuget.exe sources Add -Name "HealthCareFeed" `
-            -Source "https://pkgs.dev.azure.com/${{ secrets.AZURE_ORG }}/$projectName/_packaging/${{ secrets.AZURE_FEED_NAME }}/nuget/v3/index.json" `
+            -Source "https://pkgs.dev.azure.com/${{ secrets.AZURE_ORG }}/5fb94cd8-cf1a-449b-aba3-c0c4ad8b1114/_packaging/${{ secrets.AZURE_FEED_NAME }}/nuget/v3/index.json" `
             -Username "healthcarefeed" `
             -Password "${{ secrets.AZURE_FEED_PAT }}" `
             -StorePasswordInClearText
