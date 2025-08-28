@@ -86,15 +86,15 @@ jobs:
         run: |
           Invoke-WebRequest https://dist.nuget.org/win-x86-commandline/latest/nuget.exe -OutFile nuget.exe
 
-      # Configure Azure Artifacts feed
+      # 7. Configure Azure Artifacts feed
       - name: Add Azure Artifacts source
         run: |
+          ./nuget.exe sources Remove -Name "HealthCareFeed" || true
           ./nuget.exe sources Add -Name "HealthCareFeed" `
             -Source "https://pkgs.dev.azure.com/${{ secrets.AZURE_ORG }}/${{ secrets.AZURE_PROJECT }}/_packaging/${{ secrets.AZURE_FEED_NAME }}/nuget/v3/index.json" `
             -Username "healthcarefeed" `
             -Password "${{ secrets.AZURE_FEED_PAT }}" `
             -StorePasswordInClearText
-
       # Push packages using nuget.exe
       - name: Push NuGet packages
         run: |
