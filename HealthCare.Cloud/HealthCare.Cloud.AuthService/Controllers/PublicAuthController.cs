@@ -68,7 +68,6 @@ public partial class PublicAuthController : ControllerBase
             if (responseFromUserService.IsSuccess && responseFromUserService.Status == System.Net.HttpStatusCode.Created)
             {
                 // TODO: Create logic for adding the user to the Auth DB
-                // Testing git
                 Console.Write("User Added in User DB");
             }
 
