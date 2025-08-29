@@ -42,20 +42,13 @@ jobs:
           $projectsString = $projects -join ';'
           echo "projects=$projectsString" >> $env:GITHUB_OUTPUT
 
-      # 5. Bump version
-      - name: Bump version
+      # 5. Set version = 1.0.<run_number>
+      - name: Set version from run number
         id: version
         shell: pwsh
         run: |
-          $versionFile = "HealthCare.Common/Directory.Build.props"
-          if (-not (Test-Path $versionFile)) {
-            '<?xml version="1.0" encoding="utf-8"?><Project><PropertyGroup><Version>1.0.0</Version></PropertyGroup></Project>' | Out-File $versionFile -Encoding utf8
-          }
-          $currentVersion = Select-String -Path $versionFile -Pattern '<Version>(.*)</Version>' | ForEach-Object { $_.Matches[0].Groups[1].Value }
-          $parts = $currentVersion.Split('.')
-          $major = [int]$parts[0]; $minor = [int]$parts[1]; $patch = [int]$parts[2] + 1
-          $newVersion = "$major.$minor.$patch"
-          (Get-Content $versionFile) -replace "<Version>.*</Version>", "<Version>$newVersion</Version>" | Set-Content $versionFile
+          $newVersion = "1.0.${{ github.run_number }}"
+          echo "Using version $newVersion"
           echo "version=$newVersion" >> $env:GITHUB_OUTPUT
 
       # 6. Restore & Build
@@ -76,7 +69,7 @@ jobs:
             dotnet pack "$proj" -c Release -o ./nupkgs /p:PackageVersion=${{ steps.version.outputs.version }} --no-build
           }
 
-      # 8. Configure Azure Artifacts feed (with encoded project name)
+      # 8. Configure Azure Artifacts feed
       - name: Add Azure Artifacts source
         run: |
           ./nuget.exe sources Remove -Name "HealthCareFeed" || true
