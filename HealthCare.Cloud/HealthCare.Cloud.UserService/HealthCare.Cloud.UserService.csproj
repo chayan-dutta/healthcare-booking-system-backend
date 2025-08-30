@@ -7,9 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="HealthCare.Common.Authorization" Version="1.0.15" />
-    <PackageReference Include="HealthCare.Common.Models" Version="1.0.15" />
-    <PackageReference Include="HealthCare.Common.Persistence" Version="1.0.15" />
+    <PackageReference Include="HealthCare.Common.Authorization" Version="1.0.17" />
+    <PackageReference Include="HealthCare.Common.Models" Version="1.0.17" />
+    <PackageReference Include="HealthCare.Common.Persistence" Version="1.0.17" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.8">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
