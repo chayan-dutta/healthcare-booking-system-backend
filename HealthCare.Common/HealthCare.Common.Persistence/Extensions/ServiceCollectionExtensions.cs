@@ -51,6 +51,12 @@ public static class ServiceCollectionExtensions
             options.UseNpgsql(connectionString);
         });
 
+        // Register DbContext with factory
+        services.AddDbContextFactory<TContext>(options =>
+        {
+            options.UseNpgsql(connectionString);
+        });
+
         return services;
     }
 }
