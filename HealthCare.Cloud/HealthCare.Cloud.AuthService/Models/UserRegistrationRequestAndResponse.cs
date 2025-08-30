@@ -7,12 +7,6 @@ namespace HealthCare.Cloud.AuthService.Models;
 public class UserRegistrationBase
 {
     /// <summary>
-    /// username
-    /// </summary>
-    [JsonPropertyName("username")]
-    public string UserName { get; set; } = string.Empty;
-
-    /// <summary>
     /// Email
     /// </summary>
     [JsonPropertyName("email")]

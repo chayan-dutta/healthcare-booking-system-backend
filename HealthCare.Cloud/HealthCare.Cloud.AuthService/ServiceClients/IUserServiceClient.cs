@@ -14,5 +14,5 @@ public interface IUserServiceClient
     /// <param name="userRegistrationRequest"></param>
     /// <param name="baseUrl"></param>
     /// <returns></returns>
-    Task<ApiResponse<object>> AddUser(UserRegistrationRequest userRegistrationRequest, string baseUrl);
+    Task<ApiResponse<AddUserResponse>> AddUser(UserRegistrationRequest userRegistrationRequest, string baseUrl);
 }

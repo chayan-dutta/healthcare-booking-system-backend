@@ -18,7 +18,7 @@ public class UserServiceClient : IUserServiceClient
     /// <param name="userRegistrationRequest"></param>
     /// <param name="baseUrl"></param>
     /// <returns></returns>
-    public async Task<ApiResponse<object>> AddUser(UserRegistrationRequest userRegistrationRequest, string baseUrl)
+    public async Task<ApiResponse<AddUserResponse>> AddUser(UserRegistrationRequest userRegistrationRequest, string baseUrl)
     {
         string apiUrl = $"{baseUrl}{ApiPath}";
 

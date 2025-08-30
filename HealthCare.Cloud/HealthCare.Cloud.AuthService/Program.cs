@@ -1,4 +1,5 @@
 using HealthCare.Cloud.AuthService.Data;
+using HealthCare.Cloud.AuthService.Repository;
 using HealthCare.Cloud.AuthService.ServiceClients;
 using HealthCare.Common.Persistence.Extensions;
 
@@ -27,6 +28,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddPostgresDbContext<AuthServiceDbContext>(builder.Configuration, "HealthCareBookingSystemDB");
 
 builder.Services.AddScoped<IUserServiceClient, UserServiceClient>();
+builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 
 var app = builder.Build();
 

@@ -17,7 +17,7 @@ namespace HealthCare.Cloud.AuthService.Helpers;
 ///    - Compare recomputed hash with stored hash using constant-time comparison
 ///    - If they match → password is valid, otherwise → invalid
 /// </summary>
-public static class PasswordHasher
+public static class PasswordHelper
 {
     // =============================
     // CONSTANTS for consistency

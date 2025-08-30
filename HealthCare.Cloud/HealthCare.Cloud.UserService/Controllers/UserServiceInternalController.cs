@@ -36,18 +36,18 @@ namespace HealthCare.Cloud.UserService.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("createuser")]
-       // [InternalAuth]
-        public async Task<ApiResponse<object>> AddUser([FromBody] CreateUser user)
+     //   [InternalAuth]
+        public async Task<ApiResponse<AddUserResponse>> AddUser([FromBody] CreateUser user)
         {           
             Guid userId =  await _userDataRepo.AddUserToDatabase(user);
 
-            var addUserResponse = new
+            var addUserResponse = new AddUserResponse
             {
-                userId,
-                user.Email
+                UserId = userId,
+                Email = user.Email,
             };
 
-            return new ApiResponse<object>
+            return new ApiResponse<AddUserResponse>
             {
                 Data = addUserResponse,
                 IsSuccess = true,
