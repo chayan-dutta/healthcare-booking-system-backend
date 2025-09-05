@@ -40,14 +40,14 @@ public class UserServiceClient : IUserServiceClient
         };
 
         // Deserialize into ApiResponse<object>
-        var result = JsonSerializer.Deserialize<ApiResponse<object>>(
+        var result = JsonSerializer.Deserialize<ApiResponse<AddUserResponse>>(
             responseContent,
             options: options);
 
         // If deserialization fails, create a fallback response
         if (result == null)
         {
-            return new ApiResponse<object>
+            return new ApiResponse<AddUserResponse>
             {
                 IsSuccess = false,
                 Status = apiResponse.StatusCode,
