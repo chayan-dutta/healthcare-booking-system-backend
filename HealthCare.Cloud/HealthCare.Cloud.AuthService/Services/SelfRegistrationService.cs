@@ -186,6 +186,12 @@ public partial class SelfRegistrationService : ISelfRegistrationService
     private static ApiResponse<UserRegistrationResponse> Failure(string message, HttpStatusCode status) =>
         new() { IsSuccess = false, Message = message, Data = null, Status = status };
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="userId"></param>
+    /// <param name="registrationRequest"></param>
+    /// <returns></returns>
     private static AuthCredential PrepareAuthCredential(Guid userId, UserRegistrationRequest registrationRequest)
     {
         (byte[] passHash, byte[] passSalt) = PasswordHelper.GeneratePasswordHash(registrationRequest.Password);
@@ -208,6 +214,10 @@ public partial class SelfRegistrationService : ISelfRegistrationService
         };
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
     private static string GenerateRandomString()
     {
         // Generate a random unique validation code
@@ -227,7 +237,7 @@ public partial class SelfRegistrationService : ISelfRegistrationService
 
     #region Logger Messages
 
-    [LoggerMessage(LogLevel.Error, Message = "{exception}")]
+    [LoggerMessage(LogLevel.Error, Message = "Exception caught at SelfRegistrationService:")]
     partial void SelfRegistrationServiceError(Exception exception);
 
     #endregion

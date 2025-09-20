@@ -7,18 +7,13 @@ namespace HealthCare.Cloud.AuthService.Repository;
 /// <summary>
 /// Repository class for DB related operations
 /// </summary>
-public class AuthRepository : IAuthRepository
+/// <remarks>
+/// Constructor
+/// </remarks>
+/// <param name="dbContextFactory"></param>
+public class AuthRepository(IDbContextFactory<AuthServiceDbContext> dbContextFactory) : IAuthRepository
 {
-    private readonly IDbContextFactory<AuthServiceDbContext> _dbContextFactory;
-
-    /// <summary>
-    /// Constructor
-    /// </summary>
-    /// <param name="dbContextFactory"></param>
-    public AuthRepository(IDbContextFactory<AuthServiceDbContext> dbContextFactory)
-    {
-        _dbContextFactory = dbContextFactory;
-    }
+    private readonly IDbContextFactory<AuthServiceDbContext> _dbContextFactory = dbContextFactory;
 
     /// <summary>
     /// Method to check if any user exists with the same email while user registration
@@ -35,7 +30,7 @@ public class AuthRepository : IAuthRepository
 
 
     /// <summary>
-    /// 
+    /// Create an entry to the Auth table
     /// </summary>
     /// <param name="authCredential"></param>
     /// <returns></returns>
@@ -49,5 +44,26 @@ public class AuthRepository : IAuthRepository
         return authCredential.CreatedAt;
     }
 
+   
+    /// <inheritdoc />
+    public async Task<AuthCredential> GetAuthDetailsByEmailAsync(string email)
+    {
+        using var authDbCtx = _dbContextFactory.CreateDbContext();
+        return await authDbCtx.AuthCredentials.Where(a => a.Email == email).FirstOrDefaultAsync()
+            ?? throw new InvalidOperationException("No data found with the given email");
+    }
 
+    /// <summary>
+    /// Update auth data 
+    /// </summary>
+    /// <param name="authCredential"></param>
+    /// <returns></returns>
+    public async Task<bool> UpdateAuthAsync(AuthCredential authCredential)
+    {
+        await using var authDbCtx = _dbContextFactory.CreateDbContext(); // EF Core 6+ supports IAsyncDisposable
+        authDbCtx.AuthCredentials.Update(authCredential);
+
+        var affected = await authDbCtx.SaveChangesAsync();
+        return affected > 0;
+    }
 }

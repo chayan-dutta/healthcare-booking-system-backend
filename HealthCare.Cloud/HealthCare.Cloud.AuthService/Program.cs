@@ -31,6 +31,7 @@ builder.Services.AddPostgresDbContext<AuthServiceDbContext>(builder.Configuratio
 builder.Services.AddScoped<IUserServiceClient, UserServiceClient>();
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 builder.Services.AddScoped<ISelfRegistrationService, SelfRegistrationService>();
+builder.Services.AddScoped<IEmailVerificationService, EmailVerificationService>();
 
 var app = builder.Build();
 

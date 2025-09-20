@@ -14,10 +14,14 @@ namespace HealthCare.Cloud.AuthService.Controllers;
 public partial class PublicAuthController : ControllerBase
 {
     private readonly ISelfRegistrationService _selfRegistrationService;
+    private readonly IEmailVerificationService _emailVerificationService;
 
-    public PublicAuthController(ISelfRegistrationService selfRegistrationService)
+    public PublicAuthController(
+        ISelfRegistrationService selfRegistrationService,
+        IEmailVerificationService emailVerificationService)
     {
         _selfRegistrationService = selfRegistrationService;
+        _emailVerificationService = emailVerificationService;
     }
 
     /// <summary>
@@ -39,4 +43,17 @@ public partial class PublicAuthController : ControllerBase
     {
         return await _selfRegistrationService.UserSelfRegisterAsync(request);
     }
+
+    /// <summary>
+    /// Verify email address
+    /// </summary>
+    /// <param name="verifyEmailRequest"></param>
+    /// <returns></returns>
+    [HttpPost]
+    [Route("verifyemail")]
+    public async Task<ApiResponse<VerifyEmailResponse>> VerifyEmailAddress([FromBody] VerifyEmailRequest verifyEmailRequest)
+    {
+        return await _emailVerificationService.VerifyEmailAsync(verifyEmailRequest);
+    }
+
 }

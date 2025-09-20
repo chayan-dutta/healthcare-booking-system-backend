@@ -26,6 +26,8 @@ public class UserRegistrationRequest : UserRegistrationBase
 {
     /// <summary>
     /// password
+    /// Frontend should validate password 2 times and then send one
+    /// To Do: Add the above validation in backend
     /// </summary>
     [JsonPropertyName("password")]
     public string Password { get; set; } = string.Empty;   

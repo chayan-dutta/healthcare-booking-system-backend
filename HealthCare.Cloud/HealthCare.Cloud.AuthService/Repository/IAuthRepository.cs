@@ -13,9 +13,23 @@ public interface IAuthRepository
     Task<bool> IsAuthExistsAsync(string email);
 
     /// <summary>
-    /// 
+    /// Method to create a auth entry
     /// </summary>
     /// <param name="authCredential"></param>
     /// <returns>The Created Date and Time in UTC</returns>
     Task<DateTime> CreateAsync(AuthCredential authCredential);
+
+    /// <summary>
+    /// Get auth data using an email
+    /// </summary>
+    /// <param name="email"></param>
+    /// <returns></returns>
+    Task<AuthCredential> GetAuthDetailsByEmailAsync(string email);
+
+    /// <summary>
+    /// Update auth entry
+    /// </summary>
+    /// <param name="authCredential"></param>
+    /// <returns></returns>
+    Task<bool> UpdateAuthAsync(AuthCredential authCredential);
 }
