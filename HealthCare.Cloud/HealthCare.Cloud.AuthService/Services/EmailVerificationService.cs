@@ -12,6 +12,7 @@ public partial class EmailVerificationService : IEmailVerificationService
     private readonly ILogger<EmailVerificationService> _logger;
 
     #region Constant messages used in responses
+
     private const string EmailTokenExpiredErrorMsg = "Email verification token expired.";
     private const string EmailIsAlreadyVerifiedMessage = "Your email is already verified";
     private const string NoAccountExistMessage = "No account exist associated with this email";
@@ -53,7 +54,7 @@ public partial class EmailVerificationService : IEmailVerificationService
         try
         {
             // Validate request early to avoid null references
-            if (request is null || string.IsNullOrWhiteSpace(request.Email))
+            if (request is null || string.IsNullOrWhiteSpace(request.Email) || string.IsNullOrEmpty(request.EmailVerificationCode))
                 return ErrorResponse(HttpStatusCode.BadRequest, request?.Email ?? string.Empty, EmptyToken);
 
             // Retrieve the auth credentials for this email
@@ -93,17 +94,17 @@ public partial class EmailVerificationService : IEmailVerificationService
     /// <param name="request">The incoming email verification request.</param>
     /// <param name="existingAuthEntry">The existing auth record from the database.</param>
     /// <returns>An error response if validation fails; otherwise <c>null</c> to continue.</returns>
-    private ApiResponse<VerifyEmailResponse>? ValidateEmailVerification(VerifyEmailRequest request, AuthCredential existingAuthEntry)
+    private static ApiResponse<VerifyEmailResponse>? ValidateEmailVerification(VerifyEmailRequest request, AuthCredential existingAuthEntry)
     {
         var now = DateTime.UtcNow;
-
-        // Token expired
-        if (now > existingAuthEntry.EmailVerificationExpiry)
-            return ErrorResponse(HttpStatusCode.Gone, request.Email, EmailTokenExpiredErrorMsg);
 
         // Already verified
         if (existingAuthEntry.IsEmailVerified)
             return ErrorResponse(HttpStatusCode.BadRequest, request.Email, EmailIsAlreadyVerifiedMessage);
+
+        // Token expired
+        if (now > existingAuthEntry.EmailVerificationExpiry)
+            return ErrorResponse(HttpStatusCode.Gone, request.Email, EmailTokenExpiredErrorMsg);
 
         // Token mismatch
         if (!string.Equals(existingAuthEntry.EmailVerificationToken, request.EmailVerificationCode, StringComparison.Ordinal))
@@ -167,7 +168,7 @@ public partial class EmailVerificationService : IEmailVerificationService
 
     #region Logger
 
-    [LoggerMessage(LogLevel.Error, Message = "Exception caught at SelfRegistrationService:")]
+    [LoggerMessage(LogLevel.Error, Message = "Exception caught at EmailVerificationService:")]
     partial void EmailVerificationServiceError(Exception exception);
 
     #endregion
